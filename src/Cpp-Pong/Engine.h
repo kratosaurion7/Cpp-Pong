@@ -21,6 +21,11 @@
 #include "SpriteFont.h"
 #include "VertexTypes.h"
 
+#include "PointerList.h"
+#include "GameObject.h"
+
+class GameStructure;
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 class Engine
@@ -31,10 +36,12 @@ public:
 
     HRESULT InitEngine(HINSTANCE hInstance, int nCmdShow);
 
+    void Update();
     void Render();
 
     ID3D11Device* GetDevice();
 
+    PointerList<GameObject*>* gameObjects = NULL;
 private:
     HINSTANCE   hInstance = NULL;
     HWND        hWnd = NULL;
@@ -53,4 +60,6 @@ private:
     HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
     HRESULT InitDevice();
     void CleanupDevice();
+
+    GameStructure* GetGameStructure();
 };

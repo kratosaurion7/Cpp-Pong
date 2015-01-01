@@ -1,5 +1,10 @@
 #include "Engine.h"
 
+#include "GameInfo.h"
+
+#include "Ball.h"
+#include "Paddle.h"
+
 using namespace DirectX;
 
 #define WINDOWHEIGHT 600
@@ -7,12 +12,54 @@ using namespace DirectX;
 
 Engine::Engine()
 {
+    gameObjects = new PointerList<GameObject*>();
 
+    Paddle* player_1_panel = new Paddle();
+
+    gameObjects->Add(player_1_panel);
 };
 
 Engine::~Engine()
 {
 
+};
+
+void Engine::Update()
+{
+    std::list<GameObject*>::iterator iter = gameObjects->GetContainer()->begin();
+
+    GameStructure* context = GetGameStructure();
+
+    while (iter != gameObjects->GetContainer()->end())
+    {
+        (*iter)->Update(context);
+
+        iter++;
+    }
+
+    delete(context);
+};
+
+GameStructure* Engine::GetGameStructure()
+{
+    GameStructure* context = new GameStructure;
+
+    context->area_height = WINDOWHEIGHT;
+    context->area_width = WINDOWWIDTH;
+
+    
+
+    return context;
+};
+
+void Engine::Render()
+{
+    // Just clear the backbuffer
+    float ClearColor[4] = { 0.39f, 0.58f, 0.92f, 1.0f }; // RGBA
+
+    immediateContext->ClearRenderTargetView(renderTargetView, ClearColor);
+
+    swapChain->Present(0, 0);
 };
 
 HRESULT Engine::InitEngine(HINSTANCE hInstance, int nCmdShow)
@@ -52,7 +99,7 @@ HRESULT Engine::InitWindow(HINSTANCE hInstance, int nCmdShow)
     Engine::hInstance = hInstance;
     RECT rc = { 0, 0, WINDOWWIDTH, WINDOWHEIGHT };
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-    hWnd = CreateWindow(L"PongClass", L"Cpp-Pong", // Textual parameters
+    Engine::hWnd = CreateWindow(L"PongClass", L"Cpp-Pong", // Textual parameters
         WS_OVERLAPPEDWINDOW, // Window Style params
         CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, // Starting position
         NULL, NULL, hInstance, NULL); // Window contextual paramteters
@@ -173,15 +220,6 @@ void Engine::CleanupDevice()
     if (device) device->Release();
 };
 
-void Engine::Render()
-{
-    // Just clear the backbuffer
-    float ClearColor[4] = { 0.39f, 0.58f, 0.92f, 1.0f }; // RGBA
-
-    immediateContext->ClearRenderTargetView(renderTargetView, ClearColor);
-
-    swapChain->Present(0, 0);
-};
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
