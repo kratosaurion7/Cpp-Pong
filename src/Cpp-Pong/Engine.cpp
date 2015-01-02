@@ -14,9 +14,33 @@ Engine::Engine()
 {
     gameObjects = new PointerList<GameObject*>();
 
-    Paddle* player_1_panel = new Paddle();
+    Paddle* player_1_paddle = new Paddle();
+    Paddle* player_2_paddle = new Paddle();
 
-    gameObjects->Add(player_1_panel);
+    //Ball* ball = new Ball();
+
+
+    player_1_paddle->Height = 50;
+    player_1_paddle->Width = 50;
+
+    player_1_paddle->pos_x = 100;
+    player_1_paddle->pos_y = 100;
+
+    player_1_paddle->Color = 0x0000FF;
+
+    player_2_paddle->Height = 50;
+    player_2_paddle->Width = 50;
+
+    player_2_paddle->pos_x = 200;
+    player_2_paddle->pos_y = 200;
+
+    Player1 = player_1_paddle;
+    Player2 = player_2_paddle;
+
+    gameObjects->Add(player_1_paddle);
+    gameObjects->Add(player_2_paddle);
+    //gameObjects->Add(ball);
+
 };
 
 Engine::~Engine()
@@ -26,15 +50,28 @@ Engine::~Engine()
 
 void Engine::Update()
 {
-    std::list<GameObject*>::iterator iter = gameObjects->GetContainer()->begin();
+    if (GetKeyState(VK_LEFT) & 0x8000)
+    {
+        Player1->pos_x--;
+    }
+    if (GetKeyState(VK_RIGHT) & 0x8000)
+    {
+        Player1->pos_x++;
+    }
+    if (GetKeyState('A') & 0x8000)
+    {
+        Player2->pos_x--;
+    }
+    if (GetKeyState('D') & 0x8000)
+    {
+        Player2->pos_x++;
+    }
 
     GameStructure* context = GetGameStructure();
 
-    while (iter != gameObjects->GetContainer()->end())
+    for (int i = 0; i < gameObjects->Count(); i++)
     {
-        (*iter)->Update(context);
-
-        iter++;
+        gameObjects->Get(i)->Update(context);
     }
 
     delete(context);
@@ -47,19 +84,48 @@ GameStructure* Engine::GetGameStructure()
     context->area_height = WINDOWHEIGHT;
     context->area_width = WINDOWWIDTH;
 
-    
+    context->Balls = GetSpecificObjects<Ball>();
+    context->Paddles = GetSpecificObjects<Paddle>();
 
     return context;
 };
 
 void Engine::Render()
 {
-    // Just clear the backbuffer
-    float ClearColor[4] = { 0.39f, 0.58f, 0.92f, 1.0f }; // RGBA
+    renderer->RenderScene(gameObjects);
+};
 
-    immediateContext->ClearRenderTargetView(renderTargetView, ClearColor);
+void Engine::OnInput(char input)
+{
+    bool handled;
 
-    swapChain->Present(0, 0);
+    //switch (input)
+    //{
+    //    case VK_LEFT:
+    //    {
+    //        Player1->pos_x--;
+    //        break;
+    //    }
+    //    case VK_RIGHT:
+    //    {
+    //        Player1->pos_x++;
+    //        break;
+    //    }
+    //    case 'A':
+    //    {
+    //        Player2->pos_x--;
+    //        break;
+    //    }
+    //    case 'D':
+    //    {
+    //        Player2->pos_x++;
+    //        break;
+    //    }
+    //    default:
+    //        break;
+    //}
+
+
 };
 
 HRESULT Engine::InitEngine(HINSTANCE hInstance, int nCmdShow)
@@ -74,6 +140,8 @@ HRESULT Engine::InitEngine(HINSTANCE hInstance, int nCmdShow)
     }
 
     spriteBatch = new SpriteBatch(immediateContext);
+
+    renderer = new Renderer(hWnd);
 };
 
 HRESULT Engine::InitWindow(HINSTANCE hInstance, int nCmdShow)
@@ -228,17 +296,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     switch (message)
     {
-    case WM_PAINT:
-        hdc = BeginPaint(hWnd, &ps);
-        EndPaint(hWnd, &ps);
-        break;
+        case WM_PAINT:
+        {
+            hdc = BeginPaint(hWnd, &ps);
 
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
+            EndPaint(hWnd, &ps);
 
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
+            break;
+        }
+        case WM_DESTROY:
+        {
+            PostQuitMessage(0);
+            break;
+        }
+        case WM_KEYDOWN:
+        {
+            //OnInput((char)wParam);
+
+            break;
+        }
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
     }
 
     return 0;

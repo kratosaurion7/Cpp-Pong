@@ -4,6 +4,8 @@
 
 #include "Paddle.h"
 
+#include "BaseList.h"
+
 enum Players{
     PLAYER_1,
     PLAYER_2,
@@ -17,7 +19,13 @@ struct GameStructure{
     int area_width;
     int area_height;
 
-    Ball Balls[BALL_NUMBER];
+    BaseList<Ball*>* Balls;
 
-    Paddle Paddles[TOTAL_PLAYERS];
+    BaseList<Paddle*>* Paddles;
+
+    ~GameStructure()
+    {
+        delete(Balls);
+        delete(Paddles);
+    }
 };

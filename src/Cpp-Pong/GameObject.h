@@ -1,5 +1,7 @@
 #pragma once
 
+#include "basetsd.h"
+
 struct GameStructure;
 
 class GameObject
@@ -8,11 +10,13 @@ public:
     GameObject();
     ~GameObject();
 
-    int pos_x;
-    int pos_y;
+    float pos_x;
+    float pos_y;
 
     int Height;
-    int Width;;
+    int Width;
+
+    UINT32 Color = 0x00FFFF;
 
     virtual void Update(GameStructure* context);
 };

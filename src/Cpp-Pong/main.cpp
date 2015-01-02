@@ -18,12 +18,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         {
             switch (msg.message)
             {
-                //case WM_KEYDOWN:
-                //{
-                //    engine->OnInput((char)msg.wParam);
+                case WM_KEYDOWN:
+                {
+                    engine->OnInput((char)msg.wParam);
 
-                //    break;
-                //}
+                    break;
+                }
                 //case WM_LBUTTONDOWN:
                 //{
                 //    POINTS coordinate = MAKEPOINTS(msg.lParam);

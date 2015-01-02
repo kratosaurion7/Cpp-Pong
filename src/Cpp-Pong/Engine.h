@@ -23,6 +23,7 @@
 
 #include "PointerList.h"
 #include "GameObject.h"
+#include "Renderer.h"
 
 class GameStructure;
 
@@ -39,9 +40,36 @@ public:
     void Update();
     void Render();
 
+    void OnInput(char input);
+
     ID3D11Device* GetDevice();
 
     PointerList<GameObject*>* gameObjects = NULL;
+
+    template<class T>
+    BaseList<T*>* GetSpecificObjects()
+    {
+        BaseList<T*>* list = new BaseList<T*>();
+
+        std::list<GameObject*>::iterator iter = gameObjects->GetContainer()->begin();
+
+        while (iter != gameObjects->GetContainer()->end())
+        {
+            GameObject* object = (*iter);
+
+            T* derived = dynamic_cast<T*>(object);
+
+            if (derived)
+            {
+                list->Add(derived);
+            }
+
+            iter++;
+        }
+
+        return list;
+    };
+
 private:
     HINSTANCE   hInstance = NULL;
     HWND        hWnd = NULL;
@@ -62,4 +90,9 @@ private:
     void CleanupDevice();
 
     GameStructure* GetGameStructure();
+
+    Renderer* renderer = NULL;
+
+    GameObject* Player1 = NULL;
+    GameObject* Player2 = NULL;
 };

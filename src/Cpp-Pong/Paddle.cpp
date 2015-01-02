@@ -11,7 +11,7 @@ Paddle::~Paddle()
 };
 
 
-void Paddle::Update(GameStructure*)
+void Paddle::Update(GameStructure* context)
 {
 
 };

@@ -11,7 +11,7 @@ Ball::~Ball()
 }
 
 
-void Ball::Update(GameStructure*)
+void Ball::Update(GameStructure* context)
 {
 
 };

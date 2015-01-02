@@ -11,6 +11,6 @@ public:
     Ball();
     ~Ball();
 
-    void Update(GameStructure*);
+    void Update(GameStructure* context);
 };
 

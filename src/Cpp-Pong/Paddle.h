@@ -10,6 +10,6 @@ public:
     Paddle();
     ~Paddle();
 
-    void Update(GameStructure*);
+    void Update(GameStructure* context);
 };
 
